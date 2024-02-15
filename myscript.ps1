@@ -1,3 +1,10 @@
 dotnet build ./Template.csproj
-Copy-Item "D:\MyProjects\AtomicropsMods\MyMods\Autoshoot\bin\Debug\netstandard2\AutoShoot.dll" -Destination "D:\Games\Atomicrops\BepInEx\plugins"
-# Read-Host -Prompt "Press Enter to exit"
+Write-Host ""
+
+$from = "D:\MyProjects\AtomicropsMods\MyMods\Autoshoot\bin\Debug\netstandard2\AutoShoot.dll" 
+$to = "D:\Games\Atomicrops\BepInEx\plugins"
+Xcopy $from $to /v /f /y
+
+# /v - verifies the to file is identical to the from file.
+# /f - display from and to filenames
+# /y - auto comfirm override 
