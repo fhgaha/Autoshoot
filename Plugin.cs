@@ -31,7 +31,7 @@ namespace AutoShoot
     public class Plugin : BaseUnityPlugin
     {
         public static BepInEx.Logging.ManualLogSource Log;  // Changed to public
-
+         
         private void Awake()
         {
             Log = Logger;
