@@ -67,6 +67,7 @@ namespace AutoShoot
     {
         static void Postfix(GameStateManager __instance)
         {
+            //set shader to current cam (every update)
             if (Camera.current is var cam && cam != null)
                 if (cam.gameObject.GetComponent<AwesomeScreenShader>() == null)
                 {
@@ -150,38 +151,26 @@ namespace AutoShoot
 
 
 
-            ////set all image texture
-            //UnityEngine.Object[] imgObjs = GameObject.FindObjectsOfTypeAll(typeof(Image));
-            //var imgs = imgObjs?.Select(i => (Image)i).ToList();
+            Canvas[] canvasses = GameObject.FindObjectsOfType<Canvas>();
+            foreach (var canv in canvasses)
+            {
+                var canvOldScale = canv.transform.localScale;
+                canv.renderMode = RenderMode.ScreenSpaceCamera;
+                canv.worldCamera = Camera.main;
 
-            //foreach (var img in imgs)
-            //{
-            //    img.material = Hold.mat;
-            //}
+                foreach (Transform chld in canv.transform)
+                {
+                    var newScale = new Vector3
+                    (
+                        chld.localScale.x / canvOldScale.x,
+                        chld.localScale.y / canvOldScale.y,
+                        1
+                    );
+                    chld.localScale = newScale;
 
-
-            var canv = GameObject.Find("Canvas");
-            Debug.Log($"canv == null: {canv == null}");   //false on mainmenu scene, true on farm scene
-            var cnvCmp = canv.GetComponent<Canvas>();
-            Debug.Log($"cnvCmp == null: {cnvCmp == null}");
-            cnvCmp.renderMode = RenderMode.ScreenSpaceCamera;
-            cnvCmp.worldCamera = Camera.main;
-            canv = GameObject.Find("Canvas");
-            var imgChld = canv.GetComponentInChildren<Image>();     //just get child
-
-            Debug.Log($"imgChld.transform.localScale: {imgChld.transform.localScale}");     //(1,0, 1,0, 1,0)
-            Debug.Log($"canv.transform.localScale: {canv.transform.localScale}");           //(0,1, 0,1, 0,1)
-
-            var newScale = new Vector3
-            (
-                //imgChld.transform.localScale.x / canv.transform.localScale.x,
-                //imgChld.transform.localScale.y / canv.transform.localScale.y,
-                //imgChld.transform.localScale.z / canv.transform.localScale.z
-                0.25f, 0.25f, 1
-            );
-            imgChld.transform.localScale = newScale;
-
-            Debug.Log($"imgChld.transform.localScale: {imgChld.transform.localScale}");     //(8,0, 8,0, 8,0)
+                    //pos?
+                }
+            }
         }
 
         private static void DisableAndEnablePixelPerfectCamera()
