@@ -7,6 +7,8 @@ using UnityEngine.Rendering;
 using UnityEngine.Experimental.Rendering;
 using System.Collections;
 using System;
+using UnityEngine.UI;
+using System.Linq;
 
 namespace AutoShoot
 {
@@ -37,14 +39,14 @@ namespace AutoShoot
 
         private static void ApplyDither(GameStateManager inst)
         {
-            SetUp();
+            SetUpHold();
 
             Camera cam = Camera.current != null ? Camera.current : Camera.main;
             AwesomeScreenShader holder = cam.gameObject.AddComponent<AwesomeScreenShader>();
             holder.SetMat(Hold.mat);
         }
 
-        private static void SetUp()
+        private static void SetUpHold()
         {
             var dith = AssetBundle.LoadFromFile(Path.Combine(ModDirectory, "AssetBundles", "dithab"));
             var shader = (Shader)dith.LoadAsset("Dither");
@@ -104,12 +106,82 @@ namespace AutoShoot
 
         }
 
+        class CamCatcher : MonoBehaviour
+        {
+            public static string Name = "CamCatcherObj";
+            public GameObject cam;
+
+            void Start()
+            {
+                if (GameObject.Find(Name) is var other && other != null && other != gameObject)
+                {
+                    GameObject.Destroy(gameObject);
+                    return;
+                }
+
+                StartCoroutine(Rtn());
+                IEnumerator Rtn()
+                {
+                    while (cam == null)
+                    {
+                        yield return new WaitForEndOfFrame();
+                        var found = GameObject.Find("UiCam");
+                        if (found != null)
+                        {
+                            cam = found;
+                            Debug.Log($"CamCatcher found camera: {found}");
+                            yield break;
+                        }
+                        Debug.Log($"CamCatcher did not found UiCam yet");
+                    }
+                }
+
+
+            }
+        }
+
         static void Postfix(GameStateManager __instance)
         {
             Debug.Log($"Camera.main == null: {Camera.main == null}");
             Debug.Log($"Camera.main.GetComponent<PixelPerfectCamera>(): {Camera.main.GetComponent<PixelPerfectCamera>()}");
             DisableAndEnablePixelPerfectCamera();
 
+            new GameObject(CamCatcher.Name, typeof(CamCatcher));
+
+
+
+            ////set all image texture
+            //UnityEngine.Object[] imgObjs = GameObject.FindObjectsOfTypeAll(typeof(Image));
+            //var imgs = imgObjs?.Select(i => (Image)i).ToList();
+
+            //foreach (var img in imgs)
+            //{
+            //    img.material = Hold.mat;
+            //}
+
+
+            var canv = GameObject.Find("Canvas");
+            Debug.Log($"canv == null: {canv == null}");   //false on mainmenu scene, true on farm scene
+            var cnvCmp = canv.GetComponent<Canvas>();
+            Debug.Log($"cnvCmp == null: {cnvCmp == null}");
+            cnvCmp.renderMode = RenderMode.ScreenSpaceCamera;
+            cnvCmp.worldCamera = Camera.main;
+            canv = GameObject.Find("Canvas");
+            var imgChld = canv.GetComponentInChildren<Image>();     //just get child
+
+            Debug.Log($"imgChld.transform.localScale: {imgChld.transform.localScale}");     //(1,0, 1,0, 1,0)
+            Debug.Log($"canv.transform.localScale: {canv.transform.localScale}");           //(0,1, 0,1, 0,1)
+
+            var newScale = new Vector3
+            (
+                //imgChld.transform.localScale.x / canv.transform.localScale.x,
+                //imgChld.transform.localScale.y / canv.transform.localScale.y,
+                //imgChld.transform.localScale.z / canv.transform.localScale.z
+                0.25f, 0.25f, 1
+            );
+            imgChld.transform.localScale = newScale;
+
+            Debug.Log($"imgChld.transform.localScale: {imgChld.transform.localScale}");     //(8,0, 8,0, 8,0)
         }
 
         private static void DisableAndEnablePixelPerfectCamera()

@@ -36,14 +36,7 @@ namespace AutoShoot
         {
             Graphics.Blit(source, destination, m_renderMaterial);
         }
-
-        //void OnRenderImage(RenderTexture source, RenderTexture destination)
-        //{
-        //    //Debug.Log($"m_renderMaterial == null: {m_renderMaterial == null}");
-
-        //    Graphics.Blit(source, null, m_renderMaterial);
-        //}
-
+        
         private void Update()
         {
             if (Input.GetKey(KeyCode.Comma))
