@@ -7,7 +7,7 @@ namespace AutoShoot
 {
     //this thing allows to autoshoot, like when you farming, on holding rmb
     [HarmonyPatch(typeof(PlayerAutoFireWhileFarming), "Update")]
-    class PlayerAutoFireWhileFarming_Patch
+    class PlayerAutoFireWhileFarming_Update_Patch
     {
         static AccessTools.FieldRef<PlayerAutoFireWhileFarming, bool> hasEnemyInRange = AccessTools.FieldRefAccess<PlayerAutoFireWhileFarming, bool>("_hasEnemyInRange");
         static AccessTools.FieldRef<PlayerAutoFireWhileFarming, float> isFiring = AccessTools.FieldRefAccess<PlayerAutoFireWhileFarming, float>("_isFiring");

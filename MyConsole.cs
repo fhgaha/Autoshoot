@@ -42,10 +42,19 @@ namespace AutoShoot
                     }
                 }),
                 new MyDebugCommand("health", "Gives 10 health", "health", () => DebugCommands.GiveHealth()),
+                new MyDebugCommand("killall", " descr", "", () => DebugCommands.killall()),
                 new MyDebugCommand("NoDayProgressOn", " descr", "", () => DebugCommands.NoDayProgressOn()),
                 new MyDebugCommand("NoDayProgressOff", " descr", "", () => DebugCommands.NoDayProgressOff()),
                 new MyDebugCommand("GoToNightPhase", " descr", "", () => DebugCommands.GoToNightPhase()),
+                new MyDebugCommand("GoToDuskPhase", " descr", "", () => DebugCommands.GoToDuskPhase()),
+                new MyDebugCommand("GoToDayPhase", " descr", "", () => DebugCommands.GoToDayPhase()),
+                new MyDebugCommand("GoToDawnPhase", " descr", "", () => DebugCommands.GoToDawnPhase()),
+                new MyDebugCommand("NextDay", " descr", "", () => DebugCommands.NextDay()),
+                new MyDebugCommand("GoToFinalBoss", " descr", "", () => DebugCommands.GoToFinalBoss()),
+                new MyDebugCommand("town", " descr", "", () => DebugCommands.town()),
             };
+
+            Debug.Log("MyCobsole is loaded");
         }
 
         void Update()
