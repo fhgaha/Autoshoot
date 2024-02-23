@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using System.Linq;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 namespace AutoShoot
 {
@@ -188,33 +189,59 @@ namespace AutoShoot
         static void HanldeFarmHouse()
         {
             var copiaObj = GameObject.Find("CopiaHud");
-            var canv = copiaObj.GetComponent<Canvas>();
+            ChangeScaleLocPos(copiaObj, new[] { "Image", "Text" });
 
-            //before
-            //https://i.imgur.com/4HYNspK.png
-            //https://i.imgur.com/LrExMVP.png
 
-            //after
-            //https://i.imgur.com/i0oFAsF.png
-            //https://i.imgur.com/UbVPHmF.png
+
+
+            //var canv = copiaObj.GetComponent<Canvas>();
+            //var canvOldScale = canv.transform.localScale;
+
+            ////before
+            ////https://i.imgur.com/4HYNspK.png
+            ////https://i.imgur.com/LrExMVP.png
+
+            ////after
+            ////https://i.imgur.com/i0oFAsF.png
+            ////https://i.imgur.com/UbVPHmF.png
 
             //var imgTrans = copiaObj.transform.Find("Image");
-            var imgTrans = copiaObj.transform.Find("Image");
-            
-            var imgOldLocPos = imgTrans.localPosition;
+            //var imgOldLocPos = imgTrans.localPosition;
+
+            //var textTrans = copiaObj.transform.Find("Text");
+            //var textOldLocPos = textTrans.localPosition;
+
+            //canv.renderMode = RenderMode.ScreenSpaceCamera;
+            //canv.worldCamera = Camera.main;
+
+            //imgTrans.localPosition = new Vector3(imgOldLocPos.x / canvOldScale.x, imgOldLocPos.y / canvOldScale.y, 1);
+            //imgTrans.localScale = new Vector3(imgTrans.localScale.x / canvOldScale.x, imgTrans.localScale.y / canvOldScale.y, 1);
+
+            //textTrans.localPosition = new Vector3(textOldLocPos.x / canvOldScale.x, textOldLocPos.y / canvOldScale.y, 1);
+            //textTrans.localScale = new Vector3(textTrans.localScale.x / canvOldScale.x, textTrans.localScale.y / canvOldScale.y, 1);
+        }
+
+        static void ChangeScaleLocPos(GameObject copiaObj, params string[] chldNames)
+        {
+            var canv = copiaObj.GetComponent<Canvas>();
             var canvOldScale = canv.transform.localScale;
 
-            var textTrans = copiaObj.transform.Find("Text");
-            var textOldLocPos = textTrans.localPosition;
+            List<(Transform, Vector3)> children = chldNames
+                .Select(c => copiaObj.transform.Find(c))
+                .Select(c => (trans: c, oldLocPos: c.localPosition))
+                .ToList();
+
+            if (children.Count < chldNames.Length)
+                Debug.LogError($"children.Count < chldNames.Length: {children.Count} < {chldNames.Length}");
 
             canv.renderMode = RenderMode.ScreenSpaceCamera;
             canv.worldCamera = Camera.main;
 
-            imgTrans.localPosition = new Vector3(imgOldLocPos.x / canvOldScale.x, imgOldLocPos.y / canvOldScale.y, 1);
-            imgTrans.localScale = new Vector3(imgTrans.localScale.x / canvOldScale.x, imgTrans.localScale.y / canvOldScale.y, 1);
-
-            textTrans.localPosition = new Vector3(textOldLocPos.x / canvOldScale.x, textOldLocPos.y / canvOldScale.y, 1);
-            textTrans.localScale = new Vector3(textTrans.localScale.x / canvOldScale.x, textTrans.localScale.y / canvOldScale.y, 1);
+            foreach ((Transform trans, Vector3 oldLocPos) in children)
+            {
+                trans.localPosition = new Vector3(oldLocPos.x / canvOldScale.x, oldLocPos.y / canvOldScale.y, 1);
+                trans.localScale = new Vector3(trans.localScale.x / canvOldScale.x, trans.localScale.y / canvOldScale.y, 1);
+            }
         }
 
         private static void DisableAndEnablePixelPerfectCamera()
