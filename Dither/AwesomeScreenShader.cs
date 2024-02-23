@@ -44,14 +44,14 @@ namespace AutoShoot
                 var val = m_renderMaterial.GetFloat("_Lum");
                 val -= step;
                 m_renderMaterial.SetFloat("_Lum", val);
-                Debug.Log($"Comma pressed. Lum: {val}");
+                //Debug.Log($"Comma pressed. Lum: {val}");
             }
             else if (Input.GetKey(KeyCode.Period))
             {
                 var val = m_renderMaterial.GetFloat("_Lum");
                 val += step;
                 m_renderMaterial.SetFloat("_Lum", val);
-                Debug.Log($"Preiod presed. Lum: {val}");
+                //Debug.Log($"Preiod presed. Lum: {val}");
             }
         }
     }

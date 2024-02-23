@@ -23,6 +23,7 @@ namespace AutoShoot
                 new MyDebugCommand("help", "Show help", "help", () => showHelp = true),
                 new MyDebugCommand("test", "descr", "test", () => Debug.Log($"this is test command action call")),
                 new MyDebugCommand("runallpopups", "runallpopups descr", "runallpopups", () => DebugCommands.RunAllPopups()),
+                new MyDebugCommand("runallnots", "runallpopups descr", "runallpopups", () => DebugCommands.RunAllNotifications()),
                 new MyDebugCommand<string>("spawnboss", "spawns boss. input should be number 0-7", "spawnboss <int>", (inp) =>
                 {
                     if (int.TryParse(inp, out int res))
@@ -54,6 +55,18 @@ namespace AutoShoot
                 new MyDebugCommand("town", " descr", "", () => DebugCommands.town()),
                 new MyDebugCommand("farm", " descr", "", () => DebugCommands.farm(false)),
                 new MyDebugCommand("FullyStock", " descr", "", () => DebugCommands.FullyStock()),
+                //doesnt work
+                //new MyDebugCommand<string>("nodeath", " descr", "\'nodeath true\' or \'nodeath false\'", (s) =>
+                //{
+                //    if (bool.TryParse(s, out bool res))
+                //    {
+                //        Debug.Log($"nodeath parsed value: {res}");
+                //        DebugCommands.NoDeath(res);
+                //        return;
+                //    }
+                //    Debug.Log($"nodeath couldnt parse value: {s}");
+                //}),
+
             };
 
             Debug.Log("MyCobsole is loaded");

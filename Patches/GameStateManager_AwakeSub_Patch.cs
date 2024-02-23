@@ -157,39 +157,45 @@ namespace AutoShoot
                     HandleMainMenu();
                     break;
                 case "FarmHouse":
-                    HanldeFarmHouse();
+                    HandleFarmHouse();
+                    break;
+                case "Farm":
+                    HandleFarm();
                     break;
             }
         }
 
         static void HandleMainMenu()
         {
-            var canvObj = GameObject.Find("Canvas");
-            Debug.Log($"canvObj == null: { canvObj == null}");
-            var canv = canvObj.GetComponent<Canvas>();
-            Debug.Log($"canvCmp == null: { canv == null}");
-            var canvOldScale = canv.transform.localScale;
+            ChangeScaleLocPos(GameObject.Find("/Canvas"), new[] { "MainMenu" });
+
+            //ChangeScaleLocPos(GameObject.Find("/__UiLoadingSreen"), new[] { "Spring", "Summer", "Fall", "Winter", "Atomic", "Blank" });
+
+
+            ////it starts ok thank resets
+            var obj = GameObject.Find("/__UiLoadingSreen");
+            var canv = obj.GetComponent<Canvas>();
             canv.renderMode = RenderMode.ScreenSpaceCamera;
             canv.worldCamera = Camera.main;
 
-            foreach (Transform chld in canv.transform)
-            {
-                var newScale = new Vector3
-                (
-                    chld.localScale.x / canvOldScale.x,
-                    chld.localScale.y / canvOldScale.y,
-                    1
-                );
-                chld.localScale = newScale;
 
-                //pos?
-            }
         }
 
-        static void HanldeFarmHouse()
+        static void HandleFarmHouse()
         {
-            var copiaObj = GameObject.Find("CopiaHud");
-            ChangeScaleLocPos(copiaObj, new[] { "Image", "Text" });
+            //weird
+            //var obj = GameObject.Find("/__UiLoadingSreen");
+            //var canv = obj.GetComponent<Canvas>();
+            //canv.renderMode = RenderMode.ScreenSpaceCamera;
+            //canv.worldCamera = Camera.main;
+
+            ChangeScaleLocPos(GameObject.Find("/NoTransform/CopiaHud"), new[] { "Image", "Text" });
+            ChangeScaleLocPos(GameObject.Find("/NoTransform/HudCatCount"), new[] { "Grp" });
+            ChangeScaleLocPos(GameObject.Find("/UiDialogInfoRegion(Clone)"), new[] { "UiDialogInfoRegion" });
+            ChangeScaleLocPos(GameObject.Find("/NoTransform/UiMetaUpgradeDisplay"), new[] { "Grp" });
+            ChangeScaleLocPos(GameObject.Find("/NoTransform/UiCatMetaGame"), new[] { "Grp" });
+            ChangeScaleLocPos(GameObject.Find("/NoTransform/ChangeYearUi"), new[] { "Grp" });
+            ChangeScaleLocPos(GameObject.Find("/Placeables/ChangeCharacterHatch/ChangeCharacterHatchUi"), new[] { "Grp" });
 
 
 
@@ -221,6 +227,12 @@ namespace AutoShoot
             //textTrans.localScale = new Vector3(textTrans.localScale.x / canvOldScale.x, textTrans.localScale.y / canvOldScale.y, 1);
         }
 
+        static void HandleFarm()
+        {
+            //scaling and positional issues
+            //ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));
+        }
+
         static void ChangeScaleLocPos(GameObject copiaObj, params string[] chldNames)
         {
             var canv = copiaObj.GetComponent<Canvas>();
@@ -233,6 +245,29 @@ namespace AutoShoot
 
             if (children.Count < chldNames.Length)
                 Debug.LogError($"children.Count < chldNames.Length: {children.Count} < {chldNames.Length}");
+
+            canv.renderMode = RenderMode.ScreenSpaceCamera;
+            canv.worldCamera = Camera.main;
+
+            foreach ((Transform trans, Vector3 oldLocPos) in children)
+            {
+                trans.localPosition = new Vector3(oldLocPos.x / canvOldScale.x, oldLocPos.y / canvOldScale.y, 1);
+                trans.localScale = new Vector3(trans.localScale.x / canvOldScale.x, trans.localScale.y / canvOldScale.y, 1);
+            }
+        }
+
+        static void ChangeScaleLocPos(GameObject copiaObj)
+        {
+            var canv = copiaObj.GetComponent<Canvas>();
+            var canvOldScale = canv.transform.localScale;
+
+            List<(Transform, Vector3)> children = copiaObj.GetComponentsInChildren<Transform>()
+                .Select(c => (trans: c, oldLocPos: c.localPosition)).ToList();
+
+            //List<(Transform, Vector3)> children = chldNames
+            //    .Select(c => copiaObj.transform.Find(c))
+            //    .Select(c => (trans: c, oldLocPos: c.localPosition))
+            //    .ToList();
 
             canv.renderMode = RenderMode.ScreenSpaceCamera;
             canv.worldCamera = Camera.main;
