@@ -52,6 +52,8 @@ namespace AutoShoot
                 new MyDebugCommand("NextDay", " descr", "", () => DebugCommands.NextDay()),
                 new MyDebugCommand("GoToFinalBoss", " descr", "", () => DebugCommands.GoToFinalBoss()),
                 new MyDebugCommand("town", " descr", "", () => DebugCommands.town()),
+                new MyDebugCommand("farm", " descr", "", () => DebugCommands.farm(false)),
+                new MyDebugCommand("FullyStock", " descr", "", () => DebugCommands.FullyStock()),
             };
 
             Debug.Log("MyCobsole is loaded");

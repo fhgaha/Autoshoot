@@ -9,14 +9,31 @@ using System.Collections;
 using System;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 
 namespace AutoShoot
 {
-    public static class Hold
+    public static class Mat
     {
         public static Material mat;
         public static Texture2D dithTex;
         public static Texture2D rampTex;
+
+        public static void SetUp(string path)
+        {
+            var dith = AssetBundle.LoadFromFile(path);
+            var shader = (Shader)dith.LoadAsset("Dither");
+
+            mat = new Material(shader);
+            dithTex = (Texture2D)dith.LoadAsset("bayer1920x1080");
+            rampTex = (Texture2D)dith.LoadAsset("ramp4x1");
+            mat.SetTexture("_Dither", dithTex);
+            mat.SetTexture("_ColorRamp", rampTex);
+            Debug.Log("_MainTex: " + mat.GetTexture("_MainTex"));
+            Debug.Log("_Dither: " + mat.GetTexture("_Dither"));
+            Debug.Log("_ColorRamp: " + mat.GetTexture("_ColorRamp"));
+        }
     }
 
     [HarmonyPatch(typeof(GameStateManager), "AwakeSub")]
@@ -39,26 +56,11 @@ namespace AutoShoot
 
         private static void ApplyDither(GameStateManager inst)
         {
-            SetUpHold();
+            Mat.SetUp(Path.Combine(ModDirectory, "AssetBundles", "dithab"));
 
             Camera cam = Camera.current != null ? Camera.current : Camera.main;
             AwesomeScreenShader holder = cam.gameObject.AddComponent<AwesomeScreenShader>();
-            holder.SetMat(Hold.mat);
-        }
-
-        private static void SetUpHold()
-        {
-            var dith = AssetBundle.LoadFromFile(Path.Combine(ModDirectory, "AssetBundles", "dithab"));
-            var shader = (Shader)dith.LoadAsset("Dither");
-
-            Hold.mat = new Material(shader);
-            Hold.dithTex = (Texture2D)dith.LoadAsset("bayer1920x1080");
-            Hold.rampTex = (Texture2D)dith.LoadAsset("ramp4x1");
-            Hold.mat.SetTexture("_Dither", Hold.dithTex);
-            Hold.mat.SetTexture("_ColorRamp", Hold.rampTex);
-            Debug.Log("_MainTex: " + Hold.mat.GetTexture("_MainTex"));
-            Debug.Log("_Dither: " + Hold.mat.GetTexture("_Dither"));
-            Debug.Log("_ColorRamp: " + Hold.mat.GetTexture("_ColorRamp"));
+            holder.SetMat(Mat.mat);
         }
     }
 
@@ -72,7 +74,7 @@ namespace AutoShoot
                 if (cam.gameObject.GetComponent<AwesomeScreenShader>() == null)
                 {
                     AwesomeScreenShader holder = cam.gameObject.AddComponent<AwesomeScreenShader>();
-                    holder.SetMat(Hold.mat);
+                    holder.SetMat(Mat.mat);
                 }
         }
     }
@@ -80,7 +82,7 @@ namespace AutoShoot
     [HarmonyPatch(typeof(GameStateManager), "OnSceneStart")]
     class GameStateManager_OnSceneStart_Patch
     {
-        class MyTempComp : MonoBehaviour
+        class Waiter : MonoBehaviour
         {
             public void Wait(Action action)
             {
@@ -104,7 +106,6 @@ namespace AutoShoot
                     action?.Invoke();
                 }
             }
-
         }
 
         class CamCatcher : MonoBehaviour
@@ -133,11 +134,10 @@ namespace AutoShoot
                             Debug.Log($"CamCatcher found camera: {found}");
                             yield break;
                         }
-                        Debug.Log($"CamCatcher did not found UiCam yet");
+
+                        //Debug.Log($"CamCatcher did not found UiCam yet");
                     }
                 }
-
-
             }
         }
 
@@ -148,37 +148,81 @@ namespace AutoShoot
             DisableAndEnablePixelPerfectCamera();
 
             new GameObject(CamCatcher.Name, typeof(CamCatcher));
+            Debug.Log($"--OnSceneStart.Postfix, cur scene: {SceneManager.GetActiveScene().name}");
 
-
-
-            Canvas[] canvasses = GameObject.FindObjectsOfType<Canvas>();
-            foreach (var canv in canvasses)
+            switch (SceneManager.GetActiveScene().name)
             {
-                var canvOldScale = canv.transform.localScale;
-                canv.renderMode = RenderMode.ScreenSpaceCamera;
-                canv.worldCamera = Camera.main;
-
-                foreach (Transform chld in canv.transform)
-                {
-                    var newScale = new Vector3
-                    (
-                        chld.localScale.x / canvOldScale.x,
-                        chld.localScale.y / canvOldScale.y,
-                        1
-                    );
-                    chld.localScale = newScale;
-
-                    //pos?
-                }
+                case "MainMenu":
+                    HandleMainMenu();
+                    break;
+                case "FarmHouse":
+                    HanldeFarmHouse();
+                    break;
             }
+        }
+
+        static void HandleMainMenu()
+        {
+            var canvObj = GameObject.Find("Canvas");
+            Debug.Log($"canvObj == null: { canvObj == null}");
+            var canv = canvObj.GetComponent<Canvas>();
+            Debug.Log($"canvCmp == null: { canv == null}");
+            var canvOldScale = canv.transform.localScale;
+            canv.renderMode = RenderMode.ScreenSpaceCamera;
+            canv.worldCamera = Camera.main;
+
+            foreach (Transform chld in canv.transform)
+            {
+                var newScale = new Vector3
+                (
+                    chld.localScale.x / canvOldScale.x,
+                    chld.localScale.y / canvOldScale.y,
+                    1
+                );
+                chld.localScale = newScale;
+
+                //pos?
+            }
+        }
+
+        static void HanldeFarmHouse()
+        {
+            var copiaObj = GameObject.Find("CopiaHud");
+            var canv = copiaObj.GetComponent<Canvas>();
+
+            //before
+            //https://i.imgur.com/4HYNspK.png
+            //https://i.imgur.com/LrExMVP.png
+
+            //after
+            //https://i.imgur.com/i0oFAsF.png
+            //https://i.imgur.com/UbVPHmF.png
+
+            //var imgTrans = copiaObj.transform.Find("Image");
+            var imgTrans = copiaObj.transform.Find("Image");
+            
+            var imgOldLocPos = imgTrans.localPosition;
+            var canvOldScale = canv.transform.localScale;
+
+            var textTrans = copiaObj.transform.Find("Text");
+            var textOldLocPos = textTrans.localPosition;
+
+            canv.renderMode = RenderMode.ScreenSpaceCamera;
+            canv.worldCamera = Camera.main;
+
+            imgTrans.localPosition = new Vector3(imgOldLocPos.x / canvOldScale.x, imgOldLocPos.y / canvOldScale.y, 1);
+            imgTrans.localScale = new Vector3(imgTrans.localScale.x / canvOldScale.x, imgTrans.localScale.y / canvOldScale.y, 1);
+
+            textTrans.localPosition = new Vector3(textOldLocPos.x / canvOldScale.x, textOldLocPos.y / canvOldScale.y, 1);
+            textTrans.localScale = new Vector3(textTrans.localScale.x / canvOldScale.x, textTrans.localScale.y / canvOldScale.y, 1);
         }
 
         private static void DisableAndEnablePixelPerfectCamera()
         {
             PixelPerfectCamera ppc = Camera.main.GetComponent<PixelPerfectCamera>();
 
-            GameObject go = new GameObject("temp", typeof(MyTempComp));
-            MyTempComp cmp = go.GetComponent<MyTempComp>();
+            GameObject go = new GameObject("temp", typeof(Waiter));
+            Waiter cmp = go.GetComponent<Waiter>();
 
             if (ppc != null)
             {
@@ -190,6 +234,7 @@ namespace AutoShoot
                 });
             }
         }
+
     }
 }
 

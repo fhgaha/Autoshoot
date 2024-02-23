@@ -53,7 +53,7 @@ Shader "Custom/my2"
             
                 // just invert the colors
                 //col.rgb = 1 - col.rgb;
-                float m = 6;
+                float m = 1.6f;
                 float notlum = dot(col, float3(0.299f, 0.587f, 0.114f) * m);   //grayscale
 
                 float lum = (notlum <= 0.04045) ? (notlum / 12.92f): pow((notlum + 0.055f) / 1.055f, 2.4f); //gamma correction

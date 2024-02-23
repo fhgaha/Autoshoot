@@ -13,7 +13,7 @@ namespace AutoShoot
 
         void Start()
         {
-            if (awesomeShader == null && Hold.mat == null && Hold.mat.shader == null)
+            if (awesomeShader == null && Mat.mat == null && Mat.mat.shader == null)
             {
                 Debug.LogError("awesome shader not set");
                 m_renderMaterial = null;
@@ -21,8 +21,8 @@ namespace AutoShoot
             }
             //m_renderMaterial = new Material(awesomeShader);
 
-            awesomeShader = Hold.mat.shader;
-            m_renderMaterial = Hold.mat;
+            awesomeShader = Mat.mat.shader;
+            m_renderMaterial = Mat.mat;
         }
 
         public void SetMat(Material m)
@@ -44,14 +44,14 @@ namespace AutoShoot
                 var val = m_renderMaterial.GetFloat("_Lum");
                 val -= step;
                 m_renderMaterial.SetFloat("_Lum", val);
-                //Debug.Log($"Comma pressed. Lum: {val}");
+                Debug.Log($"Comma pressed. Lum: {val}");
             }
             else if (Input.GetKey(KeyCode.Period))
             {
                 var val = m_renderMaterial.GetFloat("_Lum");
                 val += step;
                 m_renderMaterial.SetFloat("_Lum", val);
-                //Debug.Log($"Preiod presed. Lum: {val}");
+                Debug.Log($"Preiod presed. Lum: {val}");
             }
         }
     }
