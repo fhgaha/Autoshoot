@@ -201,26 +201,14 @@ namespace AutoShoot
         {
             ChangeScaleLocPos(GameObject.Find("/Canvas"), new[] { "MainMenu" });
 
-            //ChangeScaleLocPos(GameObject.Find("/__UiLoadingSreen"), new[] { "Spring", "Summer", "Fall", "Winter", "Atomic", "Blank" });
-
-
-            ////it starts ok thank resets
             var obj = GameObject.Find("/__UiLoadingSreen");
             var canv = obj.GetComponent<Canvas>();
             canv.renderMode = RenderMode.ScreenSpaceCamera;
             canv.worldCamera = Camera.main;
-
-
         }
 
         static void HandleFarmHouse()
         {
-            //weird
-            //var obj = GameObject.Find("/__UiLoadingSreen");
-            //var canv = obj.GetComponent<Canvas>();
-            //canv.renderMode = RenderMode.ScreenSpaceCamera;
-            //canv.worldCamera = Camera.main;
-
             ChangeScaleLocPos(GameObject.Find("/NoTransform/CopiaHud"), new[] { "Image", "Text" });
             ChangeScaleLocPos(GameObject.Find("/NoTransform/HudCatCount"), new[] { "Grp" });
             ChangeScaleLocPos(GameObject.Find("/UiDialogInfoRegion(Clone)"), new[] { "UiDialogInfoRegion" });
@@ -229,34 +217,7 @@ namespace AutoShoot
             ChangeScaleLocPos(GameObject.Find("/NoTransform/ChangeYearUi"), new[] { "Grp" });
             ChangeScaleLocPos(GameObject.Find("/Placeables/ChangeCharacterHatch/ChangeCharacterHatchUi"), new[] { "Grp" });
 
-
-
-
-            //var canv = copiaObj.GetComponent<Canvas>();
-            //var canvOldScale = canv.transform.localScale;
-
-            ////before
-            ////https://i.imgur.com/4HYNspK.png
-            ////https://i.imgur.com/LrExMVP.png
-
-            ////after
-            ////https://i.imgur.com/i0oFAsF.png
-            ////https://i.imgur.com/UbVPHmF.png
-
-            //var imgTrans = copiaObj.transform.Find("Image");
-            //var imgOldLocPos = imgTrans.localPosition;
-
-            //var textTrans = copiaObj.transform.Find("Text");
-            //var textOldLocPos = textTrans.localPosition;
-
-            //canv.renderMode = RenderMode.ScreenSpaceCamera;
-            //canv.worldCamera = Camera.main;
-
-            //imgTrans.localPosition = new Vector3(imgOldLocPos.x / canvOldScale.x, imgOldLocPos.y / canvOldScale.y, 1);
-            //imgTrans.localScale = new Vector3(imgTrans.localScale.x / canvOldScale.x, imgTrans.localScale.y / canvOldScale.y, 1);
-
-            //textTrans.localPosition = new Vector3(textOldLocPos.x / canvOldScale.x, textOldLocPos.y / canvOldScale.y, 1);
-            //textTrans.localScale = new Vector3(textTrans.localScale.x / canvOldScale.x, textTrans.localScale.y / canvOldScale.y, 1);
+            ChangeScaleLocPos_FindClones("/NoTransform/UiPauseScreen");
         }
 
         static void HandleFarm()
@@ -268,6 +229,9 @@ namespace AutoShoot
             ChangeScaleLocPos(GameObject.Find("/UiHudTractor"));
             ChangeScaleLocPos(GameObject.Find("/UiHudNightWaves"));
             ChangeScaleLocPos(GameObject.Find("/UiHudCropLevelingProg"));
+
+            ChangeScaleLocPos_FindClones("/UiInfoScreen");
+            ChangeScaleLocPos_FindClones("/UiPauseScreen");
         }
 
         static void HandleTown()
@@ -280,24 +244,22 @@ namespace AutoShoot
             ChangeScaleLocPos(GameObject.Find("/UiHudTractor"));
             ChangeScaleLocPos(GameObject.Find("/UiHudNightWaves"));
             ChangeScaleLocPos(GameObject.Find("/UiHudCropLevelingProg"));
+            ChangeScaleLocPos(GameObject.Find("UiDialogInfoRegion(Clone)"));
+            HandleUiHudNewGunDialog();
 
-            //Cathcer.Inst.DoWhenFind("/UiTallyDaily2_pool", 
-            //    () => ChangeScaleLocPos(GameObject.Find("/UiTallyDaily2_pool/UiTallyDaily2(Clone)")));
+            ChangeScaleLocPos_FindClones("/UiInfoScreen");
+            ChangeScaleLocPos_FindClones("/UiPauseScreen");
+        }
+
+        public static void ChangeScaleLocPos_FindClones(string name, params string[] chldNames)
+        {
+            var found = new[] { GameObject.Find($"{name}(Clone)"), GameObject.Find(name) }
+               .Where(c => c != null).Where(c => c.GetComponent<Canvas>()).FirstOrDefault();
 
 
-            //var found = SceneManager.GetActiveScene().GetRootGameObjects().FirstOrDefault(obj => obj.name == "UiTallyDaily2_pool");
-            //Debug.Log($"found == null: {found == null}");
+            if (found == null) Debug.LogError($"couldnt find {name} or clone");
 
-            //foreach (var item in SceneManager.GetActiveScene().GetRootGameObjects())
-            //{
-            //    Debug.Log($"***found root obj: {item.name}");
-            //}
-
-            //var UiTallyDaily2_pool = GameObject.Find("/UiTallyDaily2_pool");    //null
-            //var UiTallyDaily2 = GameObject.Find("/UiTallyDaily2_pool/UiTallyDaily2(Clone)");    //null
-            //Debug.Log($"UiTallyDaily2_pool: {UiTallyDaily2_pool}, UiTallyDaily2: {UiTallyDaily2}");
-
-            //ChangeScaleLocPos(GameObject.Find("/UiTallyDaily2_pool/UiTallyDaily2(Clone)"));   //null ref
+            ChangeScaleLocPos(found);
         }
 
         public static void ChangeScaleLocPos(GameObject parent, params string[] chldNames)
@@ -339,6 +301,15 @@ namespace AutoShoot
                 trans.localPosition = new Vector3(oldLocPos.x / canvOldScale.x, oldLocPos.y / canvOldScale.y, 1);
                 trans.localScale = new Vector3(trans.localScale.x / canvOldScale.x, trans.localScale.y / canvOldScale.y, 1);
             }
+        }
+
+        static void HandleUiHudNewGunDialog()
+        {
+            //something chenges child.localPosition
+            var newGunDial = GameObject.Find("/UiHudNewGunDialog");
+            ChangeScaleLocPos(newGunDial);
+            var chld = newGunDial.transform.GetChild(0);
+            chld.localPosition = new Vector3(58, chld.localPosition.y, 1);
         }
 
         private static void DisableAndEnablePixelPerfectCamera()

@@ -8,12 +8,10 @@ namespace AutoShoot
 {
     public static class TransformExtensions
     {
-        public static List<Transform> GetTopLevelChildren(this Transform parent)
+        public static IEnumerable<Transform> GetTopLevelChildren(this Transform parent)
         {
-            List<Transform> cldrn = new();
-            for (int i = 0; i < parent.childCount; ++i)
-                cldrn.Add(parent.GetChild(i));
-            return cldrn;
+            foreach (Transform c in parent)
+                yield return c;
         }
     }
 }
