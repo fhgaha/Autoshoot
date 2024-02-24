@@ -109,13 +109,22 @@ namespace AutoShoot
             }
         }
 
-        class CamCatcher : MonoBehaviour
+        class Cathcer : MonoBehaviour
         {
+            public static Cathcer Inst;
             public static string Name = "CamCatcherObj";
             public GameObject cam;
 
             void Start()
             {
+                if (Inst != null)
+                {
+                    GameObject.Destroy(gameObject);
+                    return;
+                }
+                Inst = this;
+                GameObject.DontDestroyOnLoad(gameObject);
+
                 if (GameObject.Find(Name) is var other && other != null && other != gameObject)
                 {
                     GameObject.Destroy(gameObject);
@@ -140,6 +149,22 @@ namespace AutoShoot
                     }
                 }
             }
+
+            public void DoWhenFind(string objPath, Action action)
+            {
+                GameObject found = null;
+                StartCoroutine(R());
+                IEnumerator R()
+                {
+                    while (found == null)
+                    {
+                        found = GameObject.Find(objPath);
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                    action();
+                    yield break;
+                }
+            }
         }
 
         static void Postfix(GameStateManager __instance)
@@ -150,19 +175,24 @@ namespace AutoShoot
             Debug.Log($"Camera.main.GetComponent<PixelPerfectCamera>(): {Camera.main.GetComponent<PixelPerfectCamera>()}");
             DisableAndEnablePixelPerfectCamera();
 
-            new GameObject(CamCatcher.Name, typeof(CamCatcher));
+            new GameObject(Cathcer.Name, typeof(Cathcer));
             Debug.Log($"--OnSceneStart.Postfix, cur scene: {SceneManager.GetActiveScene().name}");
 
             switch (SceneManager.GetActiveScene().name)
             {
+                case "NewGameScene":    //this is loading screen
+                    break;
                 case "MainMenu":
                     HandleMainMenu();
                     break;
-                case "FarmHouse":
+                case "FarmHouse":       //hub area
                     HandleFarmHouse();
                     break;
                 case "Farm":
                     HandleFarm();
+                    break;
+                case "Town":
+                    HandleTown();
                     break;
             }
         }
@@ -231,12 +261,46 @@ namespace AutoShoot
 
         static void HandleFarm()
         {
-            ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));   
-
-
+            ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudSeedWheel"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudTime"));
+            ChangeScaleLocPos(GameObject.Find("/Atomicrops.Game.Ui.Hud.UiHudDate"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudTractor"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudNightWaves"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudCropLevelingProg"));
         }
 
-        static void ChangeScaleLocPos(GameObject parent, params string[] chldNames)
+        static void HandleTown()
+        {
+            //same as handle farm
+            ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudSeedWheel"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudTime"));
+            ChangeScaleLocPos(GameObject.Find("/Atomicrops.Game.Ui.Hud.UiHudDate"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudTractor"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudNightWaves"));
+            ChangeScaleLocPos(GameObject.Find("/UiHudCropLevelingProg"));
+
+            //Cathcer.Inst.DoWhenFind("/UiTallyDaily2_pool", 
+            //    () => ChangeScaleLocPos(GameObject.Find("/UiTallyDaily2_pool/UiTallyDaily2(Clone)")));
+
+
+            //var found = SceneManager.GetActiveScene().GetRootGameObjects().FirstOrDefault(obj => obj.name == "UiTallyDaily2_pool");
+            //Debug.Log($"found == null: {found == null}");
+
+            //foreach (var item in SceneManager.GetActiveScene().GetRootGameObjects())
+            //{
+            //    Debug.Log($"***found root obj: {item.name}");
+            //}
+
+            //var UiTallyDaily2_pool = GameObject.Find("/UiTallyDaily2_pool");    //null
+            //var UiTallyDaily2 = GameObject.Find("/UiTallyDaily2_pool/UiTallyDaily2(Clone)");    //null
+            //Debug.Log($"UiTallyDaily2_pool: {UiTallyDaily2_pool}, UiTallyDaily2: {UiTallyDaily2}");
+
+            //ChangeScaleLocPos(GameObject.Find("/UiTallyDaily2_pool/UiTallyDaily2(Clone)"));   //null ref
+        }
+
+        public static void ChangeScaleLocPos(GameObject parent, params string[] chldNames)
         {
             var canv = parent.GetComponent<Canvas>();
             var canvOldScale = canv.transform.localScale;
@@ -259,17 +323,13 @@ namespace AutoShoot
             }
         }
 
-        static void ChangeScaleLocPos(GameObject parent)
+        public static void ChangeScaleLocPos(GameObject parent)
         {
             var canv = parent.GetComponent<Canvas>();
             var canvOldScale = canv.transform.localScale;
 
-            List<Transform> topLevelChldrn = new();
-            for (int i = 0; i < parent.transform.childCount; ++i)
-                topLevelChldrn.Add(parent.transform.GetChild(i));
-
-            List<(Transform, Vector3)> children = topLevelChldrn.Select(c => (trans: c, oldLocPos: c.localPosition)).ToList();
-
+            List<(Transform, Vector3)> children = parent.transform.GetTopLevelChildren()
+                .Select(c => (trans: c, oldLocPos: c.localPosition)).ToList();
 
             canv.renderMode = RenderMode.ScreenSpaceCamera;
             canv.worldCamera = Camera.main;
@@ -299,6 +359,17 @@ namespace AutoShoot
             }
         }
 
+
+
+    }
+
+    [HarmonyPatch(typeof(UiTallyDaily2), "Awake")]
+    class UiTallyDaily2_Awake_Patch
+    {
+        static void Postfix(UiTallyDaily2 __instance)
+        {
+            GameStateManager_OnSceneStart_Patch.ChangeScaleLocPos(__instance.gameObject);
+        }
     }
 }
 
