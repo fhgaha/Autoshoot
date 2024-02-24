@@ -24,24 +24,6 @@ namespace AutoShoot
                 new MyDebugCommand("test", "descr", "test", () => Debug.Log($"this is test command action call")),
                 new MyDebugCommand("runallpopups", "runallpopups descr", "runallpopups", () => DebugCommands.RunAllPopups()),
                 new MyDebugCommand("runallnots", "runallpopups descr", "runallpopups", () => DebugCommands.RunAllNotifications()),
-                new MyDebugCommand<string>("spawnboss", "spawns boss. input should be number 0-7", "spawnboss <int>", (inp) =>
-                {
-                    if (int.TryParse(inp, out int res))
-                        DebugCommands.SpawnBossSimple((DebugCommands.BossOptions)res);
-                    else
-                        Debug.LogWarning($"couldnt parse input: {inp}");
-                }),
-                new MyDebugCommand<string>("gun", "gun descr", "gun ??", (s) =>
-                {
-                    try
-                    {
-                        DebugCommands.gun(s);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogError($"couldnt load gun: {e.Message}");
-                    }
-                }),
                 new MyDebugCommand("health", "Gives 10 health", "health", () => DebugCommands.GiveHealth()),
                 new MyDebugCommand("killall", " descr", "", () => DebugCommands.killall()),
                 new MyDebugCommand("NoDayProgressOn", " descr", "", () => DebugCommands.NoDayProgressOn()),
@@ -66,10 +48,33 @@ namespace AutoShoot
                 //    }
                 //    Debug.Log($"nodeath couldnt parse value: {s}");
                 //}),
+                new MyDebugCommand<string>("spawnboss", "spawns boss. input should be number 0-7", "spawnboss <int>", (inp) =>
+                {
+                    if (int.TryParse(inp, out int res))
+                        DebugCommands.SpawnBossSimple((DebugCommands.BossOptions)res);
+                    else
+                        Debug.LogWarning($"couldnt parse input: {inp}");
+                }),
+                new MyDebugCommand<string>("gun", "gun descr", "gun ??", (s) =>
+                {
+                    try
+                    {
+                        DebugCommands.gun(s);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"couldnt load gun: {e.Message}");
+                    }
+                }),
+                new MyDebugCommand("money", "adds 100_000", "", () => DebugCommands.money()),
+                new MyDebugCommand("fert", " adds 10_000", "", () => DebugCommands.fert()),
+                new MyDebugCommand("roses", " adds 100", "", () => DebugCommands.roses()),
+                new MyDebugCommand("fillinv", "descr", "format", () => DebugCommands.FillInventory()),
+
 
             };
 
-            Debug.Log("MyCobsole is loaded");
+            Debug.Log("MyConsole is loaded");
         }
 
         void Update()

@@ -45,7 +45,7 @@ namespace AutoShoot
         static void Postfix(GameStateManager __instance)
         {
             CreateMyConsole();
-            ApplyDither(__instance);
+            ApplyDitherOnCam(__instance);
         }
 
         private static void CreateMyConsole()
@@ -55,7 +55,7 @@ namespace AutoShoot
             UnityEngine.Object.DontDestroyOnLoad(obj);
         }
 
-        private static void ApplyDither(GameStateManager inst)
+        private static void ApplyDitherOnCam(GameStateManager inst)
         {
             Mat.SetUp(Path.Combine(ModDirectory, "AssetBundles", "dithab"));
 
@@ -144,6 +144,8 @@ namespace AutoShoot
 
         static void Postfix(GameStateManager __instance)
         {
+
+            //deal with ui
             Debug.Log($"Camera.main == null: {Camera.main == null}");
             Debug.Log($"Camera.main.GetComponent<PixelPerfectCamera>(): {Camera.main.GetComponent<PixelPerfectCamera>()}");
             DisableAndEnablePixelPerfectCamera();
@@ -229,17 +231,18 @@ namespace AutoShoot
 
         static void HandleFarm()
         {
-            //scaling and positional issues
-            //ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));
+            ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));   
+
+
         }
 
-        static void ChangeScaleLocPos(GameObject copiaObj, params string[] chldNames)
+        static void ChangeScaleLocPos(GameObject parent, params string[] chldNames)
         {
-            var canv = copiaObj.GetComponent<Canvas>();
+            var canv = parent.GetComponent<Canvas>();
             var canvOldScale = canv.transform.localScale;
 
             List<(Transform, Vector3)> children = chldNames
-                .Select(c => copiaObj.transform.Find(c))
+                .Select(c => parent.transform.Find(c))
                 .Select(c => (trans: c, oldLocPos: c.localPosition))
                 .ToList();
 
@@ -256,18 +259,17 @@ namespace AutoShoot
             }
         }
 
-        static void ChangeScaleLocPos(GameObject copiaObj)
+        static void ChangeScaleLocPos(GameObject parent)
         {
-            var canv = copiaObj.GetComponent<Canvas>();
+            var canv = parent.GetComponent<Canvas>();
             var canvOldScale = canv.transform.localScale;
 
-            List<(Transform, Vector3)> children = copiaObj.GetComponentsInChildren<Transform>()
-                .Select(c => (trans: c, oldLocPos: c.localPosition)).ToList();
+            List<Transform> topLevelChldrn = new();
+            for (int i = 0; i < parent.transform.childCount; ++i)
+                topLevelChldrn.Add(parent.transform.GetChild(i));
 
-            //List<(Transform, Vector3)> children = chldNames
-            //    .Select(c => copiaObj.transform.Find(c))
-            //    .Select(c => (trans: c, oldLocPos: c.localPosition))
-            //    .ToList();
+            List<(Transform, Vector3)> children = topLevelChldrn.Select(c => (trans: c, oldLocPos: c.localPosition)).ToList();
+
 
             canv.renderMode = RenderMode.ScreenSpaceCamera;
             canv.worldCamera = Camera.main;
