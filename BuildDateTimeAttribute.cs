@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AutoShoot
+namespace Obracrops
 {
     [AttributeUsage(AttributeTargets.Assembly)]
     public class BuildDateTimeAttribute : Attribute

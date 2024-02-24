@@ -13,7 +13,7 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
-namespace AutoShoot
+namespace Obracrops
 {
     public static class Mat
     {
@@ -44,16 +44,16 @@ namespace AutoShoot
 
         static void Postfix(GameStateManager __instance)
         {
-            CreateMyConsole();
+            //CreateMyConsole();
             ApplyDitherOnCam(__instance);
         }
 
-        private static void CreateMyConsole()
-        {
-            var obj = new GameObject("MyConsoleObj");
-            obj.AddComponent<MyConsole>();
-            UnityEngine.Object.DontDestroyOnLoad(obj);
-        }
+        //private static void CreateMyConsole()
+        //{
+        //    var obj = new GameObject("MyConsoleObj");
+        //    obj.AddComponent<MyConsole>();
+        //    UnityEngine.Object.DontDestroyOnLoad(obj);
+        //}
 
         private static void ApplyDitherOnCam(GameStateManager inst)
         {

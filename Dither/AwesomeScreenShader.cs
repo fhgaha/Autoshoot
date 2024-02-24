@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AutoShoot
+namespace Obracrops
 {
 
     public class AwesomeScreenShader : MonoBehaviour

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2</TargetFramework>
-		<AssemblyName>AutoShoot</AssemblyName>
+		<AssemblyName>Obracrops</AssemblyName>
 		<Description>My first plugin</Description>
 		<Version>1.0.0</Version>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -19,7 +19,7 @@
 		<PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
 		<PackageReference Include="BepInEx.Core" Version="5.*" />
 		<PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
-		<AssemblyAttribute Include="AutoShoot.BuildDateTime">
+		<AssemblyAttribute Include="Obracrops.BuildDateTime">
 			<_Parameter1>$([System.DateTime]::Now.ToString("s"))</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>

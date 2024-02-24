@@ -6,12 +6,12 @@ using System.IO;
 using Atomicrops.Game.Player.PlayerGun;
 using System.Linq;
 
-namespace AutoShoot
+namespace Obracrops
 {
     public static class MyPluginInfo
     {
-        public const string PLUGIN_GUID = "fhghaha.plugin.AutoShoot";
-        public const string PLUGIN_NAME = "AutoShoot";
+        public const string PLUGIN_GUID = "fhghaha.plugin.Obracrops";
+        public const string PLUGIN_NAME = "Obracrops";
         public const string PLUGIN_VERSION = "1.0.0";
     }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace AutoShoot
+namespace Obracrops
 {
     public static class TransformExtensions
     {
