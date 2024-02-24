@@ -28,26 +28,15 @@ namespace AutoShoot
                 new MyDebugCommand("killall", " descr", "", () => DebugCommands.killall()),
                 new MyDebugCommand("NoDayProgressOn", " descr", "", () => DebugCommands.NoDayProgressOn()),
                 new MyDebugCommand("NoDayProgressOff", " descr", "", () => DebugCommands.NoDayProgressOff()),
-                new MyDebugCommand("GoToNightPhase", " descr", "", () => DebugCommands.GoToNightPhase()),
-                new MyDebugCommand("GoToDuskPhase", " descr", "", () => DebugCommands.GoToDuskPhase()),
-                new MyDebugCommand("GoToDayPhase", " descr", "", () => DebugCommands.GoToDayPhase()),
-                new MyDebugCommand("GoToDawnPhase", " descr", "", () => DebugCommands.GoToDawnPhase()),
-                new MyDebugCommand("NextDay", " descr", "", () => DebugCommands.NextDay()),
-                new MyDebugCommand("GoToFinalBoss", " descr", "", () => DebugCommands.GoToFinalBoss()),
+                new MyDebugCommand("night", " descr", "", () => DebugCommands.GoToNightPhase()),
+                new MyDebugCommand("dusk", " descr", "", () => DebugCommands.GoToDuskPhase()),
+                new MyDebugCommand("day", " descr", "", () => DebugCommands.GoToDayPhase()),
+                new MyDebugCommand("dawn", " descr", "", () => DebugCommands.GoToDawnPhase()),
+                new MyDebugCommand("nextday", " descr", "", () => DebugCommands.NextDay()),
+                new MyDebugCommand("gotofinalboss", " descr", "", () => DebugCommands.GoToFinalBoss()),
                 new MyDebugCommand("town", " descr", "", () => DebugCommands.town()),
                 new MyDebugCommand("farm", " descr", "", () => DebugCommands.farm(false)),
                 new MyDebugCommand("FullyStock", " descr", "", () => DebugCommands.FullyStock()),
-                //doesnt work
-                //new MyDebugCommand<string>("nodeath", " descr", "\'nodeath true\' or \'nodeath false\'", (s) =>
-                //{
-                //    if (bool.TryParse(s, out bool res))
-                //    {
-                //        Debug.Log($"nodeath parsed value: {res}");
-                //        DebugCommands.NoDeath(res);
-                //        return;
-                //    }
-                //    Debug.Log($"nodeath couldnt parse value: {s}");
-                //}),
                 new MyDebugCommand<string>("spawnboss", "spawns boss. input should be number 0-7", "spawnboss <int>", (inp) =>
                 {
                     if (int.TryParse(inp, out int res))
@@ -67,8 +56,8 @@ namespace AutoShoot
                     }
                 }),
                 new MyDebugCommand("money", "adds 100_000", "", () => DebugCommands.money()),
-                new MyDebugCommand("fert", " adds 10_000", "", () => DebugCommands.fert()),
-                new MyDebugCommand("roses", " adds 100", "", () => DebugCommands.roses()),
+                new MyDebugCommand("fert", "adds 10_000", "", () => DebugCommands.fert()),
+                new MyDebugCommand("roses", "adds 100", "", () => DebugCommands.roses()),
                 new MyDebugCommand("fillinv", "descr", "format", () => DebugCommands.FillInventory()),
 
 

@@ -181,6 +181,7 @@ namespace AutoShoot
             switch (SceneManager.GetActiveScene().name)
             {
                 case "NewGameScene":    //this is loading screen
+                    HandleLoadingScreen();
                     break;
                 case "MainMenu":
                     HandleMainMenu();
@@ -197,18 +198,32 @@ namespace AutoShoot
             }
         }
 
-        static void HandleMainMenu()
+        static void HandleLoadingScreen()
         {
-            ChangeScaleLocPos(GameObject.Find("/Canvas"), new[] { "MainMenu" });
+            ChangeLoadScreen_ColorOnly();
+        }
 
+        static void ChangeLoadScreen_ColorOnly()
+        {
             var obj = GameObject.Find("/__UiLoadingSreen");
             var canv = obj.GetComponent<Canvas>();
             canv.renderMode = RenderMode.ScreenSpaceCamera;
             canv.worldCamera = Camera.main;
         }
 
+        static void HandleMainMenu()
+        {
+            ChangeScaleLocPos(GameObject.Find("/Canvas"), new[] { "MainMenu" });
+
+            //ChangeScaleLocPos(GameObject.Find("/__UiLoadingSreen"));
+            ChangeLoadScreen_ColorOnly();
+        }
+
         static void HandleFarmHouse()
         {
+            //ChangeScaleLocPos(GameObject.Find("/__UiLoadingSreen"));
+            ChangeLoadScreen_ColorOnly();
+
             ChangeScaleLocPos(GameObject.Find("/NoTransform/CopiaHud"), new[] { "Image", "Text" });
             ChangeScaleLocPos(GameObject.Find("/NoTransform/HudCatCount"), new[] { "Grp" });
             ChangeScaleLocPos(GameObject.Find("/UiDialogInfoRegion(Clone)"), new[] { "UiDialogInfoRegion" });
@@ -218,10 +233,19 @@ namespace AutoShoot
             ChangeScaleLocPos(GameObject.Find("/Placeables/ChangeCharacterHatch/ChangeCharacterHatchUi"), new[] { "Grp" });
 
             ChangeScaleLocPos_FindClones("/NoTransform/UiPauseScreen");
+
+            //ChangeScaleLocPos_FindClones("/UiNotificationManager"); //doent work
+            //ChangeScaleLocPos_FindClones("/UiPopupManager");
+
+            var scene = SceneManager.GetSceneByName("HideAndDontSave");
+            var trg = scene.GetRootGameObjects().First(obj => "UiPopupManager(Clone)".Contains(obj.name));
+            ChangeScaleLocPos(trg);
         }
 
         static void HandleFarm()
         {
+            ChangeLoadScreen_ColorOnly();
+
             ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));
             ChangeScaleLocPos(GameObject.Find("/UiHudSeedWheel"));
             ChangeScaleLocPos(GameObject.Find("/UiHudTime"));
@@ -232,10 +256,20 @@ namespace AutoShoot
 
             ChangeScaleLocPos_FindClones("/UiInfoScreen");
             ChangeScaleLocPos_FindClones("/UiPauseScreen");
+
+            //ChangeScaleLocPos_FindClones("/UiNotificationManager"); //doesnt work
+            
+            
+            ChangeScaleLocPos_FindClones("/UiHudEnergized");
+            //ChangeScaleLocPos_FindClones("/UiHudBossHealthBar");    //doesnt work
+
+            ChangeScaleLocPos_FindClones("/UiPopupManager");
         }
 
         static void HandleTown()
         {
+            ChangeLoadScreen_ColorOnly();
+
             //same as handle farm
             ChangeScaleLocPos(GameObject.Find("/MainUi2(Clone)"));
             ChangeScaleLocPos(GameObject.Find("/UiHudSeedWheel"));
@@ -249,13 +283,16 @@ namespace AutoShoot
 
             ChangeScaleLocPos_FindClones("/UiInfoScreen");
             ChangeScaleLocPos_FindClones("/UiPauseScreen");
+
+            //ChangeScaleLocPos_FindClones("/UiNotificationManager");
+
+            ChangeScaleLocPos_FindClones("/UiPopupManager");
         }
 
         public static void ChangeScaleLocPos_FindClones(string name, params string[] chldNames)
         {
             var found = new[] { GameObject.Find($"{name}(Clone)"), GameObject.Find(name) }
                .Where(c => c != null).Where(c => c.GetComponent<Canvas>()).FirstOrDefault();
-
 
             if (found == null) Debug.LogError($"couldnt find {name} or clone");
 
@@ -305,7 +342,7 @@ namespace AutoShoot
 
         static void HandleUiHudNewGunDialog()
         {
-            //something chenges child.localPosition
+            //pos incorrect, something changes child.localPosition
             var newGunDial = GameObject.Find("/UiHudNewGunDialog");
             ChangeScaleLocPos(newGunDial);
             var chld = newGunDial.transform.GetChild(0);
@@ -331,9 +368,9 @@ namespace AutoShoot
         }
 
 
-
     }
 
+    //popup with day results in town area
     [HarmonyPatch(typeof(UiTallyDaily2), "Awake")]
     class UiTallyDaily2_Awake_Patch
     {
