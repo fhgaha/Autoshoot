@@ -44,15 +44,7 @@ namespace AutoShoot
 
         static void Postfix(GameStateManager __instance)
         {
-            CreateMyConsole();
             ApplyDitherOnCam(__instance);
-        }
-
-        private static void CreateMyConsole()
-        {
-            var obj = new GameObject("MyConsoleObj");
-            obj.AddComponent<MyConsole>();
-            UnityEngine.Object.DontDestroyOnLoad(obj);
         }
 
         private static void ApplyDitherOnCam(GameStateManager inst)
