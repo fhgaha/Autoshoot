@@ -33,22 +33,22 @@
 			<HintPath>libs\Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="Assembly-CSharp-firstpass">
-		  <HintPath>Assembly-CSharp-firstpass.dll</HintPath>
+		  <HintPath>libs\Assembly-CSharp-firstpass.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine">
 			<HintPath>libs\UnityEngine.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.AssetBundleModule">
-		  <HintPath>UnityEngine.AssetBundleModule.dll</HintPath>
+		  <HintPath>libs\UnityEngine.AssetBundleModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.CoreModule">
 			<HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.IMGUIModule">
-		  <HintPath>UnityEngine.IMGUIModule.dll</HintPath>
+		  <HintPath>libs\UnityEngine.IMGUIModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.TextRenderingModule">
-		  <HintPath>UnityEngine.TextRenderingModule.dll</HintPath>
+		  <HintPath>libs\UnityEngine.TextRenderingModule.dll</HintPath>
 		</Reference>
 		<Reference Include="UnityEngine.UI">
 			<HintPath>libs\UnityEngine.UI.dll</HintPath>
